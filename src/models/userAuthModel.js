@@ -17,6 +17,7 @@ export const SignIn = async (body) => {
     },
   });
   const token = await createToken(createdUser);
+  console.log(createdUser)
   return token;
 };
 
@@ -49,7 +50,7 @@ export const login = async (passedEmail, password) => {
       throw new Error("Password Incorrect")
     }
     const final = await createToken(User)
-    console.log(result)
+    console.log(User)
     return final
   } catch (error) {
     console.log(error)

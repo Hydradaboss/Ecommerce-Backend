@@ -16,6 +16,7 @@ const authmiddleware = (req, res, next) => {
     req.user = {
       userid: decodedToken.UserId,
       Name: decodedToken.name,
+      role: decodedToken.role
     };
     next();
   } catch (error){

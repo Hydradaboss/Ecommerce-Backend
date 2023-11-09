@@ -1,4 +1,4 @@
-import { SignIn, login } from "../models/authModel.js";
+import { SignIn, login } from "../models/userAuthModel.js";
 
 
 export const httpSignIn = async (req, res) => {
