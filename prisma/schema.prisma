@@ -17,7 +17,7 @@ model User {
   firstname String
   lastname String
   password String
-  mobile String @unique
+  mobile String
   address Address?
   orders Order?
   role String @default("user")
