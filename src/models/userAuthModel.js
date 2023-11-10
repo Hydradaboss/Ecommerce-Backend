@@ -29,7 +29,14 @@ const hashPassword = async (password) => {
 
 const createToken = async (payload) => {
   const token = jwt.sign({ payload }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
+    expiresIn: "1d",
+  });
+  return token;
+};
+
+const createRefreshToken = async (payload) => {
+  const token = jwt.sign({ payload }, process.env.JWT_SECRET, {
+    expiresIn: "3d",
   });
   return token;
 };
@@ -49,8 +56,14 @@ export const login = async (passedEmail, password) => {
     if(!result){
       throw new Error("Password Incorrect")
     }
+    const rToken = await createRefreshToken(rToken)
+    const finalRToken = await prisma.user.update({
+      where:{
+        email: User.email
+      }
+    })
     const final = await createToken(User)
-    console.log(User)
+    console.log(User, finalRToken)
     return final
   } catch (error) {
     console.log(error)

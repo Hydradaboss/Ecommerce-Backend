@@ -1,3 +1,9 @@
+//create a product
+//update product
+//delete a product
+//managing orders
+
+
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 

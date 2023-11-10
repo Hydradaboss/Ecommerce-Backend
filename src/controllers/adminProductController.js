@@ -1,4 +1,4 @@
-import { CreateProduct, GetAllProduct } from "../models/productModel.js";
+import { CreateProduct, GetAllProduct } from "../models/adminProductModel.js";
 export const httpUpdateProduct = (req, res) => {
   const payload = await 
 

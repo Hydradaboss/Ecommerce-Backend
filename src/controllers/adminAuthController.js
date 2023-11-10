@@ -8,6 +8,10 @@ export const httpAdminSignIn = async (req, res) => {
 
 export const httpAdminLogin = async (req, res) => {
   const { email, password } = req.body;
-  const data = await adminLogin(email, password);
+  const {data, refreshToken} = await adminLogin(email, password);
+  res.cookie("refreshToken",refreshToken,{
+    httpOnly:true,
+    maxAge: 24 * 24 * 1000 * 60
+  })
   res.status(200).send(data);
 };
