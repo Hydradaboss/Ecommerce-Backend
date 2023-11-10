@@ -1,5 +1,5 @@
 const verifyAdmin = (req, res, next) => {
-  const role = req.user.role;
+  const role = req.user.role
   if (role === "admin") {
     next();
   } else {

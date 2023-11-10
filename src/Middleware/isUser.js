@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 
-
 const authmiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
@@ -14,13 +13,13 @@ const authmiddleware = (req, res, next) => {
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
     
     req.user = {
-      userid: decodedToken.UserId,
-      Name: decodedToken.name,
-      role: decodedToken.role
+      userid: decodedToken.payload.id,
+      email: decodedToken.payload.email,
+      role: decodedToken.payload.role,
     };
     next();
-  } catch (error){
-    console.log(error)
+  } catch (error) {
+    console.log(error);
     return res.status(401).json({ message: " error" });
   }
 };
