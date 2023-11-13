@@ -1,7 +1,30 @@
-export const httpAddUserAddress = (req, res) => {};
-export const addToProductCart = (req, res) => {};
-export const addToProdcutToWishlist = (req, res) => {};
-export const getUserWishlist = (req, res) => {};
-export const getUserCart = (req, res) => {};
-export const removeProdcutfromWishlist = (req, res) => {};
-export const removeProdcutfromCart = (req, res) => {};
+import { addUserAddress } from "../models/userProductController";
+
+export const httpAddUserAddress = async (req, res) => {
+  const payload = await addUserAddress(req.body, req.query);
+  res.status(201).send(payload);
+};
+export const addToProductCart = async (req, res) => {
+  const payload = await addUserAddress(req.body, req.query);
+  res.status(200).send(payload);
+};
+export const addToProdcutToWishlist = async (req, res) => {
+  const payload = await addUserAddress(req.body, req.query);
+  res.status(200).send(payload);
+};
+export const getUserWishlist = async (req, res) => {
+  const payload = await addUserAddress(req.body, req.query);
+  res.status(200).send(payload);
+};
+export const getUserCart = async (req, res) => {
+  const payload = await addUserAddress(req.body, req.query);
+  res.status(200).send(payload);
+};
+export const removeProdcutfromWishlist = async (req, res) => {
+  const payload = await addUserAddress(req.body, req.query);
+  res.status(200).send(payload);
+};
+export const removeProdcutfromCart = async (req, res) => {
+  const payload = await addUserAddress(req.body, req.query);
+  res.status(200).send(payload);
+};
