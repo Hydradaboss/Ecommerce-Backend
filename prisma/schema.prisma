@@ -18,7 +18,6 @@ model User {
   address Address?
   orders Order[]
   cart Cart?
-  cartid Int?
   wishlist Wishlist?
   isBlocked Boolean @default(false)
   role String @default("user")
@@ -41,6 +40,7 @@ model Product {
   description String
   price       Float
   quantity    Int
+  classification String
   oders Order[] @relation("ProductInOrder")
   wishlist Wishlist[]
   cart Cart[] @relation("productincart")

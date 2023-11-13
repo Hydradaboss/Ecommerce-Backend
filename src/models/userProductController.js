@@ -1,11 +1,13 @@
-//add to cart
+//add to cart || Done
+// add address || Done
+// adding to wishlist || Done
+// geting user cart || Done
+//getting user wishlist || Done
 //managing cart
-//searchoing product
+//searching product
 //viewing product detail
-//wishlist
 //payment option
 //checkout
-// add address || Done
 
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
@@ -16,7 +18,6 @@ export const addUserAddress = async (addressBody, userID) => {
   });
 
   if (existingAddress) {
-    // There is already an address, so this would update it
     const updatedAddress = await prisma.address.update({
       where: { id: existingAddress.id },
       data: {
@@ -28,7 +29,6 @@ export const addUserAddress = async (addressBody, userID) => {
     });
     return updatedAddress;
   } else {
-    // No address found for this user, so this would create a new address
     const newAddress = await prisma.address.create({
       data: {
         userId: userID,
@@ -45,9 +45,8 @@ export const addUserAddress = async (addressBody, userID) => {
 export const addToProductCart = async (userId, productId) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    include: { cart: true }, 
+    include: { cart: true },
   });
-
 
   const product = await prisma.product.findUnique({
     where: { id: productId },
@@ -107,5 +106,77 @@ export const addToProdcutToWishlist = async (userId, productId) => {
   }
 };
 
-export const removeProdcutfromWishlist = () => {};
-export const removeProdcutfromCart = () => {};
+export const getUserWishlist = async (userid) => {
+  const user   = await prisma.user.findUnique({
+    where:{
+      id:userid
+    }
+  }) 
+
+  if(!user){
+    throw new Error("no user found")
+  }
+  try {
+      const wishlist = await prisma.wishlist.findMany({
+        where: {
+          userId: userid,
+        },
+      });
+
+      return wishlist;
+  } catch (error) {
+    console.log(error)
+    throw new Error("ERROr FETCHING WISHLIST")
+  }
+};
+
+export const getUserCart = async (userid) => {
+   const user = await prisma.user.findUnique({
+     where: {
+       id: userid,
+     },
+   });
+
+   if (!user) {
+     throw new Error("no user found");
+   }
+   try {
+     const cart = await prisma.cart.findMany({
+       where: {
+         userId: userid,
+       },
+     });
+
+     return cart;
+   } catch (error) {
+     console.log(error);
+     throw new Error("ERROr FETCHING CART");
+   }
+};
+export const removeProdcutfromWishlist = async (userid, productId) => {
+   try {
+     const deletedItem = await prisma.wishlist.delete({
+       where: {
+         id: productId,
+         userId: userid
+       },
+     });
+     return deletedItem; 
+   } catch (error) {
+     throw new Error("Error removing product from the wishlist");
+   }
+};
+
+export const removeProdcutfromCart = async (userid, productId) => {
+  try {
+    const deletedItem = await prisma.cart.delete({
+      where: {
+        id: productId,
+        userId: userid,
+      },
+    });
+    return deletedItem;
+  } catch (error) {
+    throw new Error("Error removing product from the wishlist");
+  }
+};
