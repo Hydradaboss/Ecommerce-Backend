@@ -51,28 +51,32 @@ export const addToProductCart = async (userId, productId) => {
   const product = await prisma.product.findUnique({
     where: { id: productId },
   });
-
-  if (user && product) {
-    if (user.cart) {
-      const updatedCart = await prisma.cart.update({
-        where: { id: user.cart.id },
-        data: {
-          product: { connect: { id: productId } },
-        },
-      });
-      return updatedCart;
+  try {
+    if (user && product) {
+      if (user.cart) {
+        const updatedCart = await prisma.cart.update({
+          where: { id: user.cart.id },
+          data: {
+            product: { connect: { id: productId } },
+          },
+        });
+        return updatedCart;
+      } else {
+        const newCart = await prisma.cart.create({
+          data: {
+            userid: userId,
+            product: { connect: { id: productId } },
+          },
+        });
+        return newCart;
+      }
     } else {
-      const newCart = await prisma.cart.create({
-        data: {
-          userid: userId,
-          product: { connect: { id: productId } },
-        },
-      });
-      return newCart;
+      return "User or Product not found.";
     }
-  } else {
-    return "User or Product not found.";
+  } catch (error) {
+    console.log(error)
   }
+  
 };
 export const addToProdcutToWishlist = async (userId, productId) => {
   const user = await prisma.user.findUnique({
@@ -105,7 +109,6 @@ export const addToProdcutToWishlist = async (userId, productId) => {
     return "User or Product not found.";
   }
 };
-
 export const getUserWishlist = async (userid) => {
   const user   = await prisma.user.findUnique({
     where:{
@@ -129,7 +132,6 @@ export const getUserWishlist = async (userid) => {
     throw new Error("ERROr FETCHING WISHLIST")
   }
 };
-
 export const getUserCart = async (userid) => {
    const user = await prisma.user.findUnique({
      where: {

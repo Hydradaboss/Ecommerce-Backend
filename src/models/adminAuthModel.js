@@ -21,20 +21,17 @@ export const adminSignIn = async (body) => {
   console.log(createdUser);
   return token;
 };
-
 const hashPassword = async (password) => {
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(password, salt);
   return hash;
 };
-
 const createToken = async (payload) => {
   const token = jwt.sign({ payload }, process.env.JWT_SECRET, {
     expiresIn: "1h",
   });
   return token;
 };
-
 export const adminLogin = async (passedEmail, password) => {
   try {
     const User = await prisma.user.findUnique({

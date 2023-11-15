@@ -1,4 +1,4 @@
-import { addUserAddress } from "../models/userProductController";
+import { addUserAddress } from "../models/userProductModel.js";
 
 export const httpAddUserAddress = async (req, res) => {
   const payload = await addUserAddress(req.body, req.query);
