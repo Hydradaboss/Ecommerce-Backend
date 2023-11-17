@@ -1,14 +1,3 @@
-//add to cart || Done
-// add address || Done
-// adding to wishlist || Done
-// geting user cart || Done
-//getting user wishlist || Done
-//managing cart
-//searching product
-//viewing product detail
-//payment option
-//checkout
-
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
@@ -74,9 +63,8 @@ export const addToProductCart = async (userId, productId) => {
       return "User or Product not found.";
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-  
 };
 export const addToProdcutToWishlist = async (userId, productId) => {
   const user = await prisma.user.findUnique({
@@ -110,63 +98,63 @@ export const addToProdcutToWishlist = async (userId, productId) => {
   }
 };
 export const getUserWishlist = async (userid) => {
-  const user   = await prisma.user.findUnique({
-    where:{
-      id:userid
-    }
-  }) 
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userid,
+    },
+  });
 
-  if(!user){
-    throw new Error("no user found")
+  if (!user) {
+    throw new Error("no user found");
   }
   try {
-      const wishlist = await prisma.wishlist.findMany({
-        where: {
-          userId: userid,
-        },
-      });
+    const wishlist = await prisma.wishlist.findMany({
+      where: {
+        userId: userid,
+      },
+    });
 
-      return wishlist;
+    return wishlist;
   } catch (error) {
-    console.log(error)
-    throw new Error("ERROr FETCHING WISHLIST")
+    console.log(error);
+    throw new Error("ERROr FETCHING WISHLIST");
   }
 };
 export const getUserCart = async (userid) => {
-   const user = await prisma.user.findUnique({
-     where: {
-       id: userid,
-     },
-   });
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userid,
+    },
+  });
 
-   if (!user) {
-     throw new Error("no user found");
-   }
-   try {
-     const cart = await prisma.cart.findMany({
-       where: {
-         userId: userid,
-       },
-     });
+  if (!user) {
+    throw new Error("no user found");
+  }
+  try {
+    const cart = await prisma.cart.findMany({
+      where: {
+        userId: userid,
+      },
+    });
 
-     return cart;
-   } catch (error) {
-     console.log(error);
-     throw new Error("ERROr FETCHING CART");
-   }
+    return cart;
+  } catch (error) {
+    console.log(error);
+    throw new Error("ERROr FETCHING CART");
+  }
 };
 export const removeProdcutfromWishlist = async (userid, productId) => {
-   try {
-     const deletedItem = await prisma.wishlist.delete({
-       where: {
-         id: productId,
-         userId: userid
-       },
-     });
-     return deletedItem; 
-   } catch (error) {
-     throw new Error("Error removing product from the wishlist");
-   }
+  try {
+    const deletedItem = await prisma.wishlist.delete({
+      where: {
+        id: productId,
+        userId: userid,
+      },
+    });
+    return deletedItem;
+  } catch (error) {
+    throw new Error("Error removing product from the wishlist");
+  }
 };
 
 export const removeProdcutfromCart = async (userid, productId) => {
@@ -182,3 +170,27 @@ export const removeProdcutfromCart = async (userid, productId) => {
     throw new Error("Error removing product from the wishlist");
   }
 };
+
+export const getProductDetails = async (prodid) => {
+  try {
+    const detail = await prisma.product.findUnique({
+      where: {
+        id: prodid,
+      },
+    });
+
+    return detail;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const GetAllProduct = async () => {
+  const foundProduct = await prisma.product.findMany({});
+  return foundProduct;
+};
+
+export const userSearchingProduct = async () =>{
+  const item = await prisma.product.findMany({
+  })
+}

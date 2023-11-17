@@ -69,3 +69,4 @@ model Cart {
   userid Int  @unique
   product Product[] @relation("productincart")
 }
+
