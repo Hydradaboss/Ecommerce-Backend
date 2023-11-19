@@ -1,5 +1,5 @@
 import express from "express"
-import { httpLogin, httpSignIn } from "../controllers/userAuthController.js";
+import {httpLogin, httpSignIn } from "../controllers/userAuthController.js";
 import { httpAdminLogin, httpAdminSignIn } from "../controllers/adminAuthController.js";
 const aRouter = express.Router()
 

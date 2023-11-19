@@ -1,11 +1,16 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import validator from "validator";
 const prisma = new PrismaClient();
 
 export const SignIn = async (body) => {
   try {
     const email = body.email;
+    const isvalid = validator.isEmail(email);
+    if (!isvalid) {
+      throw new Error("Email is not valid");
+    }
     const finduser = await prisma.user.findUnique({
       where: {
         email: email,
@@ -17,12 +22,16 @@ export const SignIn = async (body) => {
 
     const password = body.password;
     const hashedPass = await hashPassword(password);
+    const newMobile = parseInt(body.mobile, 10);
+    if (newMobile === NaN) {
+      throw new Error("Number = NaN");
+    }
     const user = await prisma.user.create({
       data: {
         firstname: body.firstname,
         lastname: body.lastname,
         email: body.email,
-        mobile: body.mobile,
+        mobile:newMobile,
         password: hashedPass,
       },
     });

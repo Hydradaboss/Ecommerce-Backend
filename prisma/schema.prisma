@@ -14,7 +14,7 @@ model User {
   firstname String
   lastname String
   password String
-  mobile String
+  mobile Int
   address Address?
   orders Order[]
   cart Cart?
