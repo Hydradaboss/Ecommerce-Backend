@@ -1,4 +1,5 @@
 const error =  (err, req, res, next) => {
-    res.status(err.status).send(err.message)
+    console.error(err.stack)
+    res.status(500).json({error: "something went wrong internally"})
 }
 export default error

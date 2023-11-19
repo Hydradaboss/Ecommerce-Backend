@@ -7,31 +7,35 @@ const prisma = new PrismaClient();
 export const SignIn = async (body) => {
   try {
     const email = body.email;
-    const isvalid = validator.isEmail(email);
-    if (!isvalid) {
+    const isValidEmail = validator.isEmail(email);
+    if (!isValidEmail) {
       throw new Error("Email is not valid");
     }
-    const finduser = await prisma.user.findUnique({
+
+    const findUser = await prisma.user.findUnique({
       where: {
         email: email,
       },
     });
-    if (finduser) {
-      throw new Error(" User already exists");
+
+    if (findUser) {
+      throw new Error("User already exists");
     }
 
     const password = body.password;
     const hashedPass = await hashPassword(password);
+
     const newMobile = parseInt(body.mobile, 10);
-    if (newMobile === NaN) {
-      throw new Error("Number = NaN");
+    if (isNaN(newMobile)) {
+      throw new Error("Number is NaN");
     }
+
     const user = await prisma.user.create({
       data: {
         firstname: body.firstname,
         lastname: body.lastname,
         email: body.email,
-        mobile:newMobile,
+        mobile: newMobile,
         password: hashedPass,
       },
     });
@@ -55,50 +59,78 @@ export const SignIn = async (body) => {
         refreshToken: refreshToken,
       },
     });
+
     return { refreshToken, accessToken };
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    throw error;
   }
 };
+
 export const Login = async (body) => {
   try {
-    const User = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: {
         email: body.email,
       },
     });
 
-    if (!User) {
+    if (!user) {
       throw new Error("No user with this email found");
     }
-    const savedPass = User.password;
+
+    const savedPass = user.password;
     const result = await bcrypt.compare(body.password, savedPass);
+
     if (!result) {
       throw new Error("Password Incorrect");
     }
+
     const accessToken = await createAccessToken({
-      email: User.email,
-      role: User.role,
-      password: User.password,
+      email: user.email,
+      role: user.role,
+      password: user.password,
     });
 
     const refreshToken = await createRefreshToken({
-      email: User.email,
-      userid: User.id,
+      email: user.email,
+      userid: user.id,
     });
+
     await prisma.user.update({
       where: {
-        id: User.id,
+        id: user.id,
       },
       data: {
         refreshToken: refreshToken,
       },
     });
+
     return { accessToken, refreshToken };
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    throw error;
   }
 };
+
+export const logOut = async (userID) => {
+  try {
+    const user = await prisma.user.update({
+      where: {
+        id: userID,
+      },
+      data: {
+        refreshToken: "",
+      },
+    });
+
+    return user;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 const hashPassword = async (password) => {
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(password, salt);

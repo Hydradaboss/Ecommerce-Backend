@@ -1,11 +1,16 @@
 import express from "express"
-import {httpLogin, httpSignIn } from "../controllers/userAuthController.js";
-import { httpAdminLogin, httpAdminSignIn } from "../controllers/adminAuthController.js";
+import {httpLogOut, httpLogin, httpSignIn } from "../controllers/userAuthController.js";
+import { httpAdminLogin, httpAdminSignIn, httpBlockUser } from "../controllers/adminAuthController.js";
+import verifyAdmin from "../Middleware/isAdmin.js";
+import block from "../Middleware/isBlocked.js";
 const aRouter = express.Router()
 
-
 aRouter.post("/register", httpSignIn)
-aRouter.post("/login", httpLogin);
+aRouter.post("/login", block, httpLogin);
+aRouter.get("/logout", httpLogOut);
 aRouter.post("/admin/register", httpAdminSignIn);
 aRouter.post("/admin/login", httpAdminLogin );
+aRouter.get("/admin/login", httpAdminLogin);
+aRouter.get("/admin/blockuser",verifyAdmin, httpBlockUser);
+
 export default aRouter

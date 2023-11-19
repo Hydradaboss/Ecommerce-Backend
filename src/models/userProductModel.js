@@ -30,7 +30,6 @@ export const addUserAddress = async (addressBody, userID) => {
     return newAddress;
   }
 };
-
 export const addToProductCart = async (userId, productId) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -156,7 +155,6 @@ export const removeProdcutfromWishlist = async (userid, productId) => {
     throw new Error("Error removing product from the wishlist");
   }
 };
-
 export const removeProdcutfromCart = async (userid, productId) => {
   try {
     const deletedItem = await prisma.cart.delete({
@@ -170,7 +168,6 @@ export const removeProdcutfromCart = async (userid, productId) => {
     throw new Error("Error removing product from the wishlist");
   }
 };
-
 export const getProductDetails = async (prodid) => {
   try {
     const detail = await prisma.product.findUnique({
@@ -184,12 +181,10 @@ export const getProductDetails = async (prodid) => {
     console.log(error);
   }
 };
-
 export const GetAllProduct = async () => {
   const foundProduct = await prisma.product.findMany({});
   return foundProduct;
 };
-
 export const userSearchingProduct = async () =>{
   const item = await prisma.product.findMany({
   })
