@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client"
-const prisma = new PrismaClient
+const prisma = new PrismaClient()
+
 const block = async (req, res, next) => {
     const check = await prisma.user.findUnique({
         where:{
