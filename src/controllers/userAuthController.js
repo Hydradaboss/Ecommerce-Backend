@@ -16,7 +16,7 @@ export const httpSignIn = async (req, res) => {
     res.status(201).send({ msg: "Signed Up" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Sign in failed" });
   }
 };
 
@@ -36,7 +36,7 @@ export const httpLogin = async (req, res) => {
     res.status(200).send({ msg: "Logged In" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: " Login failed" });
   }
 };
 
@@ -44,10 +44,10 @@ export const httpLogOut = async (req, res) => {
   try {
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
-    const logout = await logOut(req.user.userid);
+    await logOut(req.user.userid);
     res.status(200).send({ message: "Logout successful" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Log out Failed" });
   }
 };

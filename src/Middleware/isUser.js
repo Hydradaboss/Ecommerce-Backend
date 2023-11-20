@@ -14,14 +14,14 @@ const authMiddleware = async (req, res, next) => {
     }
     const token = authHeader.split(" ")[1];
     try {
-      const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+      const decodedToken = jwt.verify(token, process.env.ATS);
       req.user = {
-        userid: decodedToken.userId,
-        email: decodedToken.email,
-        role: decodedToken.role,
+        userid: decodedToken.payload.userid,
+        email: decodedToken.payload.email,
+        role: decodedToken.payload.role,
       };
       const user = await prisma.user.findUnique({
-        where: { id: decodedToken.userId },
+        where: { id: decodedToken.payload.userid },
       });
 
       if (!user) {
@@ -29,28 +29,29 @@ const authMiddleware = async (req, res, next) => {
       }
       next();
     } catch (err) {
-      if (err.name === "TokenExpiredError" && req.cookies.refreshToken) {
+      if (err.name === "TokenExpiredError" && req.cookies.refreshToken ) {
         try {
           const refreshToken = req.cookies.refreshToken;
+          console.log("the refresh token is", refreshToken)
           const decodedRefreshToken = jwt.verify(
             refreshToken,
             process.env.REFRESH_TOKEN_SECRET
           );
           const newAccessToken = jwt.sign(
             {
-              userId: decodedRefreshToken.userId,
+              _id: decodedRefreshToken.userid,
               email: decodedRefreshToken.email,
               role: decodedRefreshToken.role,
             },
-            process.env.JWT_SECRET,
-            { expiresIn: "15m" } 
+            process.env.ATS,
+            { expiresIn: "1h" } 
           );
           await prisma.user.update({
-            where: { id: decodedRefreshToken.userId },
+            where: { id: decodedRefreshToken.userid },
             data: { accessToken: newAccessToken },
           });
           req.user = {
-            userid: decodedRefreshToken.userId,
+            _id: decodedRefreshToken.userid,
             email: decodedRefreshToken.email,
             role: decodedRefreshToken.role,
           };
@@ -61,13 +62,12 @@ const authMiddleware = async (req, res, next) => {
           });
           return next();
         } catch (refreshTokenError) {
-          console.log(refreshTokenError)
           return res
             .status(401)
-            .json({ message: "Invalid or expired refresh token" });
+            .json({ message: "Invalid token" });
         }
       }
-      return res.status(401).json({ message: "Invalid or expired token" });
+      return res.status(401).json({ message: "Invalid or expired token" , err: err});
     }
   } catch (error) {
     console.error(error);

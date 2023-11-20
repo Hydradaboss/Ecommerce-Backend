@@ -46,6 +46,7 @@ export const adminSignIn = async (body) => {
       email: user.email,
       role: user.role,
       password: user.password,
+      userid: user.id,
     });
 
     const refreshToken = await createRefreshToken({
@@ -93,6 +94,7 @@ export const adminLogin = async (body) => {
       email: user.email,
       role: user.role,
       password: user.password,
+      userid: user.id
     });
 
     const refreshToken = await createRefreshToken({

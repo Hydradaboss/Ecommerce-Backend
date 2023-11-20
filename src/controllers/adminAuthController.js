@@ -45,7 +45,7 @@ export const httpAdminLogin = async (req, res) => {
 };
 export const httpBlockUser = async (req, res) => {
   try {
-    const user = await blockUser(req.user.userid);
+    await blockUser(req.user.userid);
     res.status(200).send("User blocked");
   } catch (error) {
     console.error(error);

@@ -144,7 +144,7 @@ const createAccessToken = async (payload) => {
 };
 const createRefreshToken = async (payload) => {
   const token = jwt.sign({ payload }, process.env.RTS, {
-    expiresIn: "30d",
+    expiresIn: "1d",
   });
   return token;
 };
