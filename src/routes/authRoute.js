@@ -8,7 +8,7 @@ const aRouter = express.Router()
 
 aRouter.post("/register", httpSignIn)
 aRouter.post("/login", block, httpLogin);
-aRouter.get("/logout",authMiddleware, httpLogOut);
+aRouter.get("/logout/:id",authMiddleware, httpLogOut);
 aRouter.post("/admin/register", httpAdminSignIn);
 aRouter.post("/admin/login", httpAdminLogin );
 aRouter.get("/admin/login", httpAdminLogin);

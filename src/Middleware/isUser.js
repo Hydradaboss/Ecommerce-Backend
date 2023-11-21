@@ -3,7 +3,6 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-
 const authMiddleware = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -30,13 +29,10 @@ const authMiddleware = async (req, res, next) => {
       }
       next();
     } catch (err) {
-      if (err.name === "TokenExpiredError" && req.cookies.refreshToken ) {
+      if (err.name === "TokenExpiredError" && req.cookies.refreshToken) {
         try {
           const refreshToken = req.cookies.refreshToken;
-          const decodedRefreshToken = jwt.verify(
-            refreshToken,
-            process.env.RTS
-          );
+          const decodedRefreshToken = jwt.verify(refreshToken, process.env.RTS);
           const newAccessToken = jwt.sign(
             {
               _id: decodedRefreshToken.userid,
@@ -44,7 +40,7 @@ const authMiddleware = async (req, res, next) => {
               role: decodedRefreshToken.role,
             },
             process.env.ATS,
-            { expiresIn: "1h" } 
+            { expiresIn: "1h" }
           );
           await prisma.user.update({
             where: { id: decodedRefreshToken.userid },
@@ -62,13 +58,11 @@ const authMiddleware = async (req, res, next) => {
           });
           return next();
         } catch (refreshTokenError) {
-          if(refreshTokenError.name === "TokenExpiredError"){
-            const query = req.query.id
-            return res.status(300).redirect(`/logout/${query}`)
+          if (refreshTokenError.name === "TokenExpiredError") {
+            const query = req.query.id;
+            return res.status(300).redirect(`/logout/${query}`);
           }
         }
-        
-
       }
 
       return res.status(401).json({ message: "Invalid or expired token" });
