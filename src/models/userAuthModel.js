@@ -138,13 +138,13 @@ const hashPassword = async (password) => {
 };
 const createAccessToken = async (payload) => {
   const token = jwt.sign({ payload }, process.env.ATS, {
-    expiresIn: "1h",
+    expiresIn: "1d",
   });
   return token;
 };
 const createRefreshToken = async (payload) => {
   const token = jwt.sign({ payload }, process.env.RTS, {
-    expiresIn: "1d",
+    expiresIn: "30d",
   });
   return token;
 };

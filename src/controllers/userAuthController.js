@@ -44,7 +44,7 @@ export const httpLogOut = async (req, res) => {
   try {
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
-    await logOut(req.user.userid);
+    await logOut(req.query.id);
     res.status(200).send({ message: "Logout successful" });
   } catch (error) {
     console.error(error);

@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+
 const authMiddleware = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -32,10 +33,9 @@ const authMiddleware = async (req, res, next) => {
       if (err.name === "TokenExpiredError" && req.cookies.refreshToken ) {
         try {
           const refreshToken = req.cookies.refreshToken;
-          console.log("the refresh token is", refreshToken)
           const decodedRefreshToken = jwt.verify(
             refreshToken,
-            process.env.REFRESH_TOKEN_SECRET
+            process.env.RTS
           );
           const newAccessToken = jwt.sign(
             {
@@ -62,12 +62,16 @@ const authMiddleware = async (req, res, next) => {
           });
           return next();
         } catch (refreshTokenError) {
-          return res
-            .status(401)
-            .json({ message: "Invalid token" });
+          if(refreshTokenError.name === "TokenExpiredError"){
+            const query = req.query.id
+            return res.status(300).redirect(`/logout/${query}`)
+          }
         }
+        
+
       }
-      return res.status(401).json({ message: "Invalid or expired token" , err: err});
+
+      return res.status(401).json({ message: "Invalid or expired token" });
     }
   } catch (error) {
     console.error(error);

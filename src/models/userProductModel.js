@@ -2,7 +2,8 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const addUserAddress = async (addressBody, userID) => {
-  const existingAddress = await prisma.address.findFirst({
+  console.log(user)
+  const existingAddress = await prisma.address.findUnique({
     where: { userId: userID },
   });
 
