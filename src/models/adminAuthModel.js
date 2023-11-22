@@ -60,7 +60,7 @@ export const adminSignIn = async (body) => {
       },
       data: {
         refreshToken: refreshToken,
-      },
+        isLoggedin:true      },
     });
 
     return { refreshToken, accessToken };
@@ -108,6 +108,7 @@ export const adminLogin = async (body) => {
       },
       data: {
         refreshToken: refreshToken,
+        isLoggedin: true
       },
     });
 

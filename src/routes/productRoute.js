@@ -8,7 +8,6 @@ import {
   httpDeleteProduct,
 } from "../controllers/adminProductController.js";
 import {
-  httpAddUserAddress,
   addToProdcutToWishlist,
   addToProductCart,
   getUserCart,
@@ -22,7 +21,6 @@ pRouter.post("/admin/create", authmiddleware, verifyAdmin, httpCreateProduct);
 pRouter.get("/admin/get", authmiddleware, verifyAdmin, httpGetAllProduct);
 pRouter.put("/admin/update", authmiddleware, verifyAdmin, httpUpdateProduct);
 pRouter.delete("/admin/delete", authmiddleware, verifyAdmin, httpDeleteProduct);
-pRouter.post("/address",httpAddUserAddress);
 pRouter.post("/:prodid/wishlist", addToProdcutToWishlist);
 pRouter.post("/:prodid/cart", addToProductCart);
 pRouter.get("/get/cart", getUserCart);

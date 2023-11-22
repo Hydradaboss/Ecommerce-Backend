@@ -1,36 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-export const addUserAddress = async (addressBody, userID) => {
-  console.log(user)
-  const existingAddress = await prisma.address.findUnique({
-    where: { userId: userID },
-  });
-
-  if (existingAddress) {
-    const updatedAddress = await prisma.address.update({
-      where: { id: existingAddress.id },
-      data: {
-        street: addressBody.street,
-        city: addressBody.city,
-        state: addressBody.state,
-        postalCode: addressBody.postalCode,
-      },
-    });
-    return updatedAddress;
-  } else {
-    const newAddress = await prisma.address.create({
-      data: {
-        userId: userID,
-        street: addressBody.street,
-        city: addressBody.city,
-        state: addressBody.state,
-        postalCode: addressBody.postalCode,
-      },
-    });
-    return newAddress;
-  }
-};
 export const addToProductCart = async (userId, productId) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },

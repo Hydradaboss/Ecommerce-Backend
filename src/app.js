@@ -9,7 +9,16 @@ import pRouter from "./routes/productRoute.js";
 import notFound from "./Middleware/notFound.js";
 import error from "./Middleware/error.js";
 import pgStore from "connect-pg-simple";
+import pkg from "pg"
+const {Pool} = pkg
 const store = pgStore(session);
+const pool = new Pool({
+  user: process.env.PGU,
+  host: process.env.PGHOST,
+  database: process.env.PGDB,
+  password: process.env.PGPASS,
+  port: process.env.PGPORT,
+});
 
 const app = express();
 app.use(helmet());
@@ -19,13 +28,14 @@ app.use(cookie());
 app.use(
   session({
     store: new store({
+      pool,
       conString: process.env.DATABASE_URL,
       createTableIfMissing: true,
-      tableName: "EC Session",
+      tableName: "EC_Session",
     }),
     secret: process.env.SS,
-    resave: false,
-    saveUninitialized: true,
+    resave: true,
+    saveUninitialized: false,
     cookie: { secure: true, httpOnly: true, maxAge: 24 * 60 * 60 * 1000 },
   })
 );

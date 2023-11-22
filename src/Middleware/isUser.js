@@ -1,12 +1,12 @@
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
+import error from "./error";
 
 const prisma = new PrismaClient();
 
 const authMiddleware = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
-
     if (!authHeader) {
       return res
         .status(401)
@@ -15,6 +15,7 @@ const authMiddleware = async (req, res, next) => {
     const token = authHeader.split(" ")[1];
     try {
       const decodedToken = jwt.verify(token, process.env.ATS);
+      console.log(decodedToken,"access")
       req.user = {
         userid: decodedToken.payload.userid,
         email: decodedToken.payload.email,
@@ -58,14 +59,12 @@ const authMiddleware = async (req, res, next) => {
           });
           return next();
         } catch (refreshTokenError) {
-          if (refreshTokenError.name === "TokenExpiredError") {
-            const query = req.query.id;
-            return res.status(300).redirect(`/logout/${query}`);
-          }
+          console.error(error)
+          return res.status(401).json({message: " Invalid Refresh Token"})
         }
       }
 
-      return res.status(401).json({ message: "Invalid or expired token" });
+      return res.status(401).json({ message: "No Refresh Token " });
     }
   } catch (error) {
     console.error(error);

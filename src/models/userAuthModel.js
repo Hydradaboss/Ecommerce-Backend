@@ -57,16 +57,16 @@ export const SignIn = async (body) => {
       },
       data: {
         refreshToken: refreshToken,
+        isLoggedin: true
       },
     });
 
-    return { refreshToken, accessToken };
+    return { refreshToken, accessToken,  userid:user.id };
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
-
 export const Login = async (body) => {
   try {
     const user = await prisma.user.findUnique({
@@ -103,16 +103,16 @@ export const Login = async (body) => {
       },
       data: {
         refreshToken: refreshToken,
+        isLoggedin: true
       },
     });
 
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken, userid: user.id };
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
-
 export const logOut = async (userID) => {
   try {
     const user = await prisma.user.update({
@@ -121,6 +121,7 @@ export const logOut = async (userID) => {
       },
       data: {
         refreshToken: "",
+        isLoggedin: false
       },
     });
 
@@ -128,6 +129,34 @@ export const logOut = async (userID) => {
   } catch (error) {
     console.error(error);
     throw error;
+  }
+};
+export const addUserAddress = async (addressBody, userID) => {
+  const existingAddress = await prisma.address.findUnique({
+    where: { userId: userID },
+  });
+  if (existingAddress) {
+    const updatedAddress = await prisma.address.update({
+      where: { id: existingAddress.id },
+      data: {
+        street: addressBody.street,
+        city: addressBody.city,
+        state: addressBody.state,
+        postalCode: addressBody.postalCode,
+      },
+    });
+    return updatedAddress;
+  } else {
+    const newAddress = await prisma.address.create({
+      data: {
+        userId: userID,
+        street: addressBody.street,
+        city: addressBody.city,
+        state: addressBody.state,
+        postalCode: addressBody.postalCode,
+      },
+    });
+    return newAddress;
   }
 };
 

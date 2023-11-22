@@ -1,13 +1,3 @@
-import { addUserAddress } from "../models/userProductModel.js";
-
-export const httpAddUserAddress = async (req, res) => {
-  const payload = await addUserAddress(req.body, req.query.userid);
-  res.status(201).json({done:"done"});
-};
-
-
-
-
 export const addToProductCart = async (req, res) => {
   const payload = await addUserAddress(req.body, req.query);
   res.status(200).send(payload);
