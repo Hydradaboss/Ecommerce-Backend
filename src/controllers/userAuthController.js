@@ -4,18 +4,12 @@ import { addUserAddress } from "../models/userAuthModel.js";
 export const httpSignIn = async (req, res) => {
   try {
     const { refreshToken, accessToken } = await SignIn(req.body);
-    console.log(req.sessionID);
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       maxAge: 24 * 24 * 1000 * 60,
       secure: true,
     });
     res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      maxAge: 24 * 24 * 1000 * 60,
-      secure: true,
-    });
-    res.cookie("sessionID", req.sessionID, {
       httpOnly: true,
       maxAge: 24 * 24 * 1000 * 60,
       secure: true,
@@ -29,9 +23,8 @@ export const httpSignIn = async (req, res) => {
 
 export const httpLogin = async (req, res) => {
   try {
-    const { refreshToken, accessToken, userid } = await Login(req.body);
+    const { refreshToken, accessToken } = await Login(req.body);
     req.session.userid = userid;
-    console.log(req.session.userid);
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       maxAge: 24 * 24 * 1000 * 60,

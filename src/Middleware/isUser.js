@@ -22,13 +22,11 @@ const authMiddleware = async (req, res, next) => {
       if (!user) {
         return res.status(401).json({ message: "User not found" });
       }
-      console.log(decodedToken.payload.email)
-      console.log("reached here");
        req.user = {
-         email: decodedToken.payload.email,
-         role: decodedToken.payload.role,
+        userid: user.id,
+         email: user.email,
+         role: user.role,
        };
-      
       next();
     } catch (err) {
       if (err.name === "TokenExpiredError" && req.cookies.refreshToken) {
@@ -48,8 +46,9 @@ const authMiddleware = async (req, res, next) => {
           }
           const newAccessToken = jwt.sign(
             {
-              email: decodedRefreshToken.email,
-              role: decodedRefreshToken.role,
+              email: belongsTo.email,
+              role: belongsTo.role,
+              userid: belongsTo.id
             },
             process.env.ATS,
             { expiresIn: "1d" }
@@ -57,6 +56,7 @@ const authMiddleware = async (req, res, next) => {
           req.user = {
             email: decodedRefreshToken.email,
             role: decodedRefreshToken.role,
+            userid: decodedRefreshToken.id
           };
           res.cookie("accessToken", newAccessToken, {
             httpOnly: true,

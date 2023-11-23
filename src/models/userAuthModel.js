@@ -11,17 +11,14 @@ export const SignIn = async (body) => {
     if (!isValidEmail) {
       throw new Error("Email is not valid");
     }
-
     const findUser = await prisma.user.findUnique({
       where: {
         email: email,
       },
     });
-
     if (findUser) {
       throw new Error("User already exists");
     }
-
     const password = body.password;
     const hashedPass = await hashPassword(password);
 
@@ -29,7 +26,6 @@ export const SignIn = async (body) => {
     if (isNaN(newMobile)) {
       throw new Error("Number is NaN");
     }
-
     const user = await prisma.user.create({
       data: {
         firstname: body.firstname,
@@ -39,18 +35,15 @@ export const SignIn = async (body) => {
         password: hashedPass,
       },
     });
-
     const accessToken = await createAccessToken({
       email: user.email,
       role: user.role,
       password: user.password,
     });
-
     const refreshToken = await createRefreshToken({
       email: user.email,
       userid: user.id,
     });
-
     await prisma.user.update({
       where: {
         id: user.id,
@@ -60,8 +53,7 @@ export const SignIn = async (body) => {
         isLoggedin: true
       },
     });
-
-    return { refreshToken, accessToken,  userid:user.id };
+    return { refreshToken, accessToken };
   } catch (error) {
     console.error(error);
     throw error;
@@ -107,7 +99,7 @@ export const Login = async (body) => {
       },
     });
 
-    return { accessToken, refreshToken, userid: user.id };
+    return { accessToken, refreshToken};
   } catch (error) {
     console.error(error);
     throw error;
@@ -115,7 +107,6 @@ export const Login = async (body) => {
 };
 export const logOut = async (email) => {
   try {
-    console.log(email)
     const user = await prisma.user.update({
       where: {
         email: email,
@@ -125,7 +116,6 @@ export const logOut = async (email) => {
         isLoggedin: false
       },
     });
-
     return user;
   } catch (error) {
     console.error(error);
@@ -160,7 +150,6 @@ export const addUserAddress = async (addressBody, userID) => {
     return newAddress;
   }
 };
-
 const hashPassword = async (password) => {
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(password, salt);
