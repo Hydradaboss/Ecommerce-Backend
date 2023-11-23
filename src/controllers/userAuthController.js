@@ -24,7 +24,6 @@ export const httpSignIn = async (req, res) => {
 export const httpLogin = async (req, res) => {
   try {
     const { refreshToken, accessToken } = await Login(req.body);
-    req.session.userid = userid;
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       maxAge: 24 * 24 * 1000 * 60,
@@ -46,7 +45,7 @@ export const httpLogOut = async (req, res) => {
     await logOut(req.user.email);
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
-    await req.session.destroy();
+    req.session.destroy();
     res.status(200).send({ message: "Logout successful" });
   } catch (error) {
     console.error(error);
