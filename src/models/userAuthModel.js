@@ -113,11 +113,12 @@ export const Login = async (body) => {
     throw error;
   }
 };
-export const logOut = async (userID) => {
+export const logOut = async (email) => {
   try {
+    console.log(email)
     const user = await prisma.user.update({
       where: {
-        id: userID,
+        email: email,
       },
       data: {
         refreshToken: "",

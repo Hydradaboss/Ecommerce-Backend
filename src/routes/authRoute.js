@@ -4,12 +4,11 @@ import { httpAdminLogin, httpAdminSignIn, httpBlockUser } from "../controllers/a
 import verifyAdmin from "../Middleware/isAdmin.js";
 //import block from "../Middleware/isBlocked.js";
 import authMiddleware from "../Middleware/isUser.js";
-import { check } from "../Middleware/checkSSID.js";
 const aRouter = express.Router()
 
 aRouter.post("/register", httpSignIn)
 aRouter.post("/login", httpLogin);
-aRouter.get("/logout", httpLogOut);
+aRouter.get("/logout", authMiddleware, httpLogOut);
 aRouter.post("/address", authMiddleware, httpAddUserAddress);
 aRouter.post("/admin/register", httpAdminSignIn);
 aRouter.post("/admin/login", httpAdminLogin );

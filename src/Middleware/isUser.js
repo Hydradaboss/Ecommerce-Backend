@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
-import error from "./error";
+
 
 const prisma = new PrismaClient();
 
@@ -15,40 +15,46 @@ const authMiddleware = async (req, res, next) => {
     const token = authHeader.split(" ")[1];
     try {
       const decodedToken = jwt.verify(token, process.env.ATS);
-      console.log(decodedToken,"access")
-      req.user = {
-        userid: decodedToken.payload.userid,
-        email: decodedToken.payload.email,
-        role: decodedToken.payload.role,
-      };
       const user = await prisma.user.findUnique({
-        where: { id: decodedToken.payload.userid },
+        where: { email: decodedToken.payload.email },
       });
 
       if (!user) {
         return res.status(401).json({ message: "User not found" });
       }
+      console.log(decodedToken.payload.email)
+      console.log("reached here");
+       req.user = {
+         email: decodedToken.payload.email,
+         role: decodedToken.payload.role,
+       };
+      
       next();
     } catch (err) {
       if (err.name === "TokenExpiredError" && req.cookies.refreshToken) {
         try {
           const refreshToken = req.cookies.refreshToken;
+          const belongsTo = await prisma.user.findFirst({
+            where:{
+              refreshToken
+            }
+          })
+          if(!belongsTo){
+            return res.status(400).json({message: "no user with the refresh token in db"})
+          }
           const decodedRefreshToken = jwt.verify(refreshToken, process.env.RTS);
+          if(belongsTo.id !== decodedRefreshToken.userid){
+            return res.status(401).json({message: "Refresh token doesnt match history"})
+          }
           const newAccessToken = jwt.sign(
             {
-              _id: decodedRefreshToken.userid,
               email: decodedRefreshToken.email,
               role: decodedRefreshToken.role,
             },
             process.env.ATS,
-            { expiresIn: "1h" }
+            { expiresIn: "1d" }
           );
-          await prisma.user.update({
-            where: { id: decodedRefreshToken.userid },
-            data: { accessToken: newAccessToken },
-          });
           req.user = {
-            _id: decodedRefreshToken.userid,
             email: decodedRefreshToken.email,
             role: decodedRefreshToken.role,
           };
@@ -59,15 +65,15 @@ const authMiddleware = async (req, res, next) => {
           });
           return next();
         } catch (refreshTokenError) {
-          console.error(error)
+          console.error(refreshTokenError)
           return res.status(401).json({message: " Invalid Refresh Token"})
         }
       }
-
-      return res.status(401).json({ message: "No Refresh Token " });
+      console.log(err)
+      return res.status(401).json({ message: "No t Refresh Token " });
     }
   } catch (error) {
-    console.error(error);
+    console.log(error)
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };

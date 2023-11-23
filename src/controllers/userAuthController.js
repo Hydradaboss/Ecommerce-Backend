@@ -3,7 +3,7 @@ import { addUserAddress } from "../models/userAuthModel.js";
 
 export const httpSignIn = async (req, res) => {
   try {
-    const { refreshToken, accessToken, userid } = await SignIn(req.body);
+    const { refreshToken, accessToken } = await SignIn(req.body);
     console.log(req.sessionID);
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -50,8 +50,7 @@ export const httpLogin = async (req, res) => {
 };
 export const httpLogOut = async (req, res) => {
   try {
-    console.log(req.sessionID);
-    await logOut(parseInt(userid));
+    await logOut(req.user.email);
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
     await req.session.destroy();
