@@ -40,8 +40,9 @@ model Product {
   name        String
   description String
   price       Float
+  picture String?
   quantity    Int
-  classification String?
+  type String
   oders Order[] @relation("ProductInOrder")
   wishlist Wishlist[]
   cart Cart[] @relation("productincart")

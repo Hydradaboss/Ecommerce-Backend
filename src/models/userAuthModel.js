@@ -1,16 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import validator from "validator";
+import userSchema from "../validation/user.schema";
 const prisma = new PrismaClient();
 
-export const SignIn = async (body) => {
+export const SignIn = async (firstName, lastName, email, password, mobile) => {
   try {
-    const email = body.email;
-    const isValidEmail = validator.isEmail(email);
-    if (!isValidEmail) {
-      throw new Error("Email is not valid");
-    }
+    const {} = userSchema.attempt()
     const findUser = await prisma.user.findUnique({
       where: {
         email: email,

@@ -1,9 +1,11 @@
 import { SignIn, Login, logOut } from "../models/userAuthModel.js";
 import { addUserAddress } from "../models/userAuthModel.js";
+import { stripBody } from "../utils/helper.js";
 
 export const httpSignIn = async (req, res) => {
   try {
-    const { refreshToken, accessToken } = await SignIn(req.body);
+    const {email, firstName, lastName, mobile, password } = stripBody(req.body)
+    const { refreshToken, accessToken } = await SignIn(email, firstName, mobile,lastName, password);
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       maxAge: 24 * 24 * 1000 * 60,
@@ -45,6 +47,7 @@ export const httpLogOut = async (req, res) => {
     await logOut(req.user.email);
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
+    req.clearCookie("sessionID");
     req.session.destroy();
     res.status(200).send({ message: "Logout successful" });
   } catch (error) {
@@ -53,6 +56,6 @@ export const httpLogOut = async (req, res) => {
   }
 };
 export const httpAddUserAddress = async (req, res) => {
-  const payload = await addUserAddress(req.body, parseInt(req.query.id));
+  await addUserAddress(req.body, parseInt(req.query.id));
   res.status(201).json({ done: "done" });
 };

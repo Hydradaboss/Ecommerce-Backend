@@ -8,6 +8,7 @@ export const CreateProduct = async (body) => {
     description: body.description,
     price: body.price,
     quantity: body.quantity,
+    picture: body.picture
   });
   return createdData;
 };
