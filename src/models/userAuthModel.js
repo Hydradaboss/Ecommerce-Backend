@@ -1,12 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import {signUpSchema} from "../validation/user.schema.js";
+import {loginSchema, signUpSchema} from "../validation/user.schema.js";
+import { createAccessToken, createRefreshToken } from "../utils/createToken.js";
+import { hashPassword } from "../utils/hashPass.js";
 const prisma = new PrismaClient();
 
 export const SignIn = async (email, firstName, mobile,lastName, password) => {
   try {
-    const result =  signUpSchema.validate({
+    const result = signUpSchema.validate({
       email,
       firstName,
       mobile,
@@ -66,9 +67,13 @@ export const SignIn = async (email, firstName, mobile,lastName, password) => {
 };
 export const Login = async (body) => {
   try {
+    const data = loginSchema.validate({
+      email: body.email,
+      password:body.password
+    })
     const user = await prisma.user.findUnique({
       where: {
-        email: body.email,
+        email: data.email,
       },
     });
 
@@ -77,7 +82,7 @@ export const Login = async (body) => {
     }
 
     const savedPass = user.password;
-    const result = await bcrypt.compare(body.password, savedPass);
+    const result = await bcrypt.compare(data.password, savedPass);
 
     if (!result) {
       throw new Error("Password Incorrect");
@@ -154,21 +159,4 @@ export const addUserAddress = async (addressBody, userID) => {
     });
     return newAddress;
   }
-};
-const hashPassword = async (password) => {
-  const salt = await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash(password, salt);
-  return hash;
-};
-const createAccessToken = async (payload) => {
-  const token = jwt.sign({ payload }, process.env.ATS, {
-    expiresIn: "1d",
-  });
-  return token;
-};
-const createRefreshToken = async (payload) => {
-  const token = jwt.sign({ payload }, process.env.RTS, {
-    expiresIn: "30d",
-  });
-  return token;
 };

@@ -24,3 +24,8 @@ export const signUpSchema = Joi.object({
   password: baseUserSchema.extract("password"),
   mobile: baseUserSchema.extract("mobile"),
 }).options({ presence: "required" });
+
+export const loginSchema = Joi.object({
+  email: baseUserSchema.extract("email"),
+  password: baseUserSchema.extract("password")
+}).options({presence: "required"})
