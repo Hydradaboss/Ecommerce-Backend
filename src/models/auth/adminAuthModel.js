@@ -42,14 +42,14 @@ export const adminSignIn = async (body) => {
       },
     });
 
-    const accessToken = await createAccessToken({
+    const accessToken = createAccessToken({
       email: user.email,
       role: user.role,
       password: user.password,
       userid: user.id,
     });
 
-    const refreshToken = await createRefreshToken({
+    const refreshToken = createRefreshToken({
       email: user.email,
       userid: user.id,
     });
@@ -90,14 +90,14 @@ export const adminLogin = async (body) => {
       throw new Error("Password Incorrect");
     }
 
-    const accessToken = await createAccessToken({
+    const accessToken = createAccessToken({
       email: user.email,
       role: user.role,
       password: user.password,
       userid: user.id
     });
 
-    const refreshToken = await createRefreshToken({
+    const refreshToken = createRefreshToken({
       email: user.email,
       userid: user.id,
     });
