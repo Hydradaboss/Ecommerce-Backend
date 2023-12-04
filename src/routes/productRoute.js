@@ -6,7 +6,7 @@ import {
   httpUpdateProduct,
   httpCreateProduct,
   httpDeleteProduct,
-} from "../controllers/adminProductController.js";
+} from "../controllers/product/admin.prooduct.js";
 import {
   addToProdcutToWishlist,
   addToProductCart,
@@ -14,7 +14,7 @@ import {
   getUserWishlist,
   removeProdcutfromCart,
   removeProdcutfromWishlist,
-} from "../controllers/userProductController.js";
+} from "../controllers/product/user.product.js";
 const pRouter = express.Router();
 
 pRouter.post("/admin/create", authmiddleware, verifyAdmin, httpCreateProduct);

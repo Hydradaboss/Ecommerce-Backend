@@ -4,12 +4,12 @@ import {
   httpLogin,
   httpSignIn,
   httpAddUserAddress,
-} from "../controllers/auth/userAuthController.js";
+} from "../controllers/auth/user.auth.js";
 import {
   httpAdminLogin,
   httpAdminSignIn,
   httpBlockUser,
-} from "../controllers/auth/adminAuthController.js";
+} from "../controllers/auth/admin.auth.js";
 import verifyAdmin from "../Middleware/isAdmin.js";
 //import block from "../Middleware/isBlocked.js";
 import authMiddleware from "../Middleware/isUser.js";

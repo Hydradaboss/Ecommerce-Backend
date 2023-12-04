@@ -3,7 +3,7 @@ import {
   adminSignIn,
   blockUser,
   unBlockUser,
-} from "../../models/auth/adminAuthModel.js";
+} from "../../models/auth/admin.auth.js";
 
 export const httpAdminSignIn = async (req, res) => {
   try {

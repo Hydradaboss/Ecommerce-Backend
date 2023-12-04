@@ -1,4 +1,4 @@
-import { CreateProduct, GetAllProduct, UpdateProduct } from "../models/adminProductModel.js";
+import { CreateProduct, GetAllProduct, UpdateProduct } from "../../models/product/admin.product.js"
 
 export const httpUpdateProduct = async (req, res) => {
 
