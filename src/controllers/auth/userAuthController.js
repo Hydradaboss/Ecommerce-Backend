@@ -1,6 +1,6 @@
-import { SignIn, Login, logOut } from "../models/auth/userAuthModel.js";
-import { addUserAddress } from "../models/auth/userAuthModel.js";
-import { stripBody } from "../utils/helper.js";
+import { SignIn, Login, logOut } from "../../models/auth/userAuthModel.js";
+import { addUserAddress } from "../../models/auth/userAuthModel.js";
+import { stripBody } from "../../utils/helper.js";
 
 export const httpSignIn = async (req, res) => {
   try {

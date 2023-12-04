@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { hashPassword } from "../../utils/hashPass";
+import { createAccessToken, createRefreshToken } from "../../utils/createToken";
 
 const prisma = new PrismaClient();
 
@@ -148,22 +149,4 @@ export const unBlockUser = async (userID) => {
     console.error(error);
     throw error;
   }
-};
-
-const hashPassword = async (password) => {
-  const salt = await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash(password, salt);
-  return hash;
-};
-const createAccessToken = async (payload) => {
-  const token = jwt.sign({ payload }, process.env.ATS, {
-    expiresIn: "1d",
-  });
-  return token;
-};
-const createRefreshToken = async (payload) => {
-  const token = jwt.sign({ payload }, process.env.RTS, {
-    expiresIn: "30d",
-  });
-  return token;
 };
