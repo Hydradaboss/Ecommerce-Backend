@@ -1,11 +1,19 @@
-import { SignIn, Login, logOut } from "../models/userAuthModel.js";
-import { addUserAddress } from "../models/userAuthModel.js";
+import { SignIn, Login, logOut } from "../models/auth/userAuthModel.js";
+import { addUserAddress } from "../models/auth/userAuthModel.js";
 import { stripBody } from "../utils/helper.js";
 
 export const httpSignIn = async (req, res) => {
   try {
-    const {email, firstName, lastName, mobile, password } = stripBody(req.body)
-    const { refreshToken, accessToken } = await SignIn(email, firstName, mobile,lastName, password);
+    const { email, firstName, lastName, mobile, password } = stripBody(
+      req.body
+    );
+    const { refreshToken, accessToken } = await SignIn(
+      email,
+      firstName,
+      mobile,
+      lastName,
+      password
+    );
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       maxAge: 24 * 24 * 1000 * 60,

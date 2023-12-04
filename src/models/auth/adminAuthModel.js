@@ -1,79 +1,80 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import {loginSchema, signUpSchema} from "../validation/user.schema.js";
-import { createAccessToken, createRefreshToken } from "../utils/createToken.js";
-import { hashPassword } from "../utils/hashPass.js";
+import jwt from "jsonwebtoken";
+
 const prisma = new PrismaClient();
 
-export const SignIn = async (email, firstName, mobile,lastName, password) => {
+export const adminSignIn = async (body) => {
   try {
-    const result = signUpSchema.validate({
-      email,
-      firstName,
-      mobile,
-      lastName,
-      password,
-    });
-    if (result.error){
-      console.log(result.error)
-      throw new Error("Error validating")
+    const email = body.email;
+    const isValidEmail = validator.isEmail(email);
+    if (!isValidEmail) {
+      throw new Error("Email is not valid");
     }
-    const findUser = await prisma.user.findUnique({
+
+    const existingUser = await prisma.user.findUnique({
       where: {
         email: email,
       },
     });
-    if (findUser) {
+
+    if (existingUser) {
       throw new Error("User already exists");
     }
+
+    const password = body.password;
     const hashedPass = await hashPassword(password);
 
-    const newMobile = parseInt(mobile, 10);
+    const newMobile = parseInt(body.mobile, 10);
     if (isNaN(newMobile)) {
       throw new Error("Number is NaN");
     }
+
     const user = await prisma.user.create({
       data: {
-        firstname: firstName,
-        lastname: lastName,
-        email: email,
+        firstname: body.firstname,
+        lastname: body.lastname,
+        email: body.email,
         mobile: newMobile,
         password: hashedPass,
+        role: "admin",
       },
     });
+
     const accessToken = await createAccessToken({
       email: user.email,
       role: user.role,
       password: user.password,
+      userid: user.id,
     });
+
     const refreshToken = await createRefreshToken({
       email: user.email,
       userid: user.id,
     });
+
     await prisma.user.update({
       where: {
         id: user.id,
       },
       data: {
         refreshToken: refreshToken,
-        isLoggedin: true
-      },
+        isLoggedin:true      },
     });
+
     return { refreshToken, accessToken };
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
-export const Login = async (body) => {
+
+export const adminLogin = async (body) => {
   try {
-    const data = loginSchema.validate({
-      email: body.email,
-      password:body.password
-    })
     const user = await prisma.user.findUnique({
       where: {
-        email: data.email,
+        email: body.email,
+        role: "admin",
       },
     });
 
@@ -82,7 +83,7 @@ export const Login = async (body) => {
     }
 
     const savedPass = user.password;
-    const result = await bcrypt.compare(data.password, savedPass);
+    const result = await bcrypt.compare(body.password, savedPass);
 
     if (!result) {
       throw new Error("Password Incorrect");
@@ -92,6 +93,7 @@ export const Login = async (body) => {
       email: user.email,
       role: user.role,
       password: user.password,
+      userid: user.id
     });
 
     const refreshToken = await createRefreshToken({
@@ -109,54 +111,59 @@ export const Login = async (body) => {
       },
     });
 
-    return { accessToken, refreshToken};
+    return { accessToken, refreshToken };
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
-export const logOut = async (email) => {
+
+export const blockUser = async (userID) => {
   try {
-    const user = await prisma.user.update({
+    await prisma.user.update({
       where: {
-        email: email,
+        id: userID,
       },
       data: {
-        refreshToken: "",
-        isLoggedin: false
+        isBlocked: true,
       },
     });
-    return user;
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
-export const addUserAddress = async (addressBody, userID) => {
-  const existingAddress = await prisma.address.findUnique({
-    where: { userId: userID },
-  });
-  if (existingAddress) {
-    const updatedAddress = await prisma.address.update({
-      where: { id: existingAddress.id },
+
+export const unBlockUser = async (userID) => {
+  try {
+    await prisma.user.update({
+      where: {
+        id: userID,
+      },
       data: {
-        street: addressBody.street,
-        city: addressBody.city,
-        state: addressBody.state,
-        postalCode: addressBody.postalCode,
+        isBlocked: false,
       },
     });
-    return updatedAddress;
-  } else {
-    const newAddress = await prisma.address.create({
-      data: {
-        userId: userID,
-        street: addressBody.street,
-        city: addressBody.city,
-        state: addressBody.state,
-        postalCode: addressBody.postalCode,
-      },
-    });
-    return newAddress;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
+};
+
+const hashPassword = async (password) => {
+  const salt = await bcrypt.genSalt(10);
+  const hash = await bcrypt.hash(password, salt);
+  return hash;
+};
+const createAccessToken = async (payload) => {
+  const token = jwt.sign({ payload }, process.env.ATS, {
+    expiresIn: "1d",
+  });
+  return token;
+};
+const createRefreshToken = async (payload) => {
+  const token = jwt.sign({ payload }, process.env.RTS, {
+    expiresIn: "30d",
+  });
+  return token;
 };
