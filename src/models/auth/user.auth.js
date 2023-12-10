@@ -44,12 +44,12 @@ export const SignIn = async (email, firstName, mobile, lastName, password) => {
         password: hashedPass,
       },
     });
-    const accessToken = await createAccessToken({
+    const accessToken = createAccessToken({
       email: user.email,
       role: user.role,
       password: user.password,
     });
-    const refreshToken = await createRefreshToken({
+    const refreshToken = createRefreshToken({
       email: user.email,
       userid: user.id,
     });
@@ -74,9 +74,12 @@ export const Login = async (body) => {
       email: body.email,
       password: body.password,
     });
+    if(data.error){
+      throw new Error("Error Validating")
+    }
     const user = await prisma.user.findUnique({
       where: {
-        email: data.email,
+        email: data.value.email,
       },
     });
 
@@ -84,20 +87,19 @@ export const Login = async (body) => {
       throw new Error("No user with this email found");
     }
 
-    const savedPass = user.password;
-    const result = await bcrypt.compare(data.password, savedPass);
+    const result = await bcrypt.compare(data.value.password, user.password);
 
     if (!result) {
       throw new Error("Password Incorrect");
     }
 
-    const accessToken = await createAccessToken({
+    const accessToken = createAccessToken({
       email: user.email,
       role: user.role,
       password: user.password,
     });
 
-    const refreshToken = await createRefreshToken({
+    const refreshToken = createRefreshToken({
       email: user.email,
       userid: user.id,
     });

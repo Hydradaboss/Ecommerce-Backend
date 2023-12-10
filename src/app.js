@@ -34,9 +34,9 @@ app.use(
       tableName: "EC_Session",
     }),
     secret: process.env.SS,
-    resave: true,
-    saveUninitialized: false,
-    cookie: { secure: true, httpOnly: true, maxAge: 24 * 60 * 60 * 1000 },
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false, httpOnly: false, maxAge: 24 * 60 * 60 * 1000 },
   })
 );
 app.use(express.json());
