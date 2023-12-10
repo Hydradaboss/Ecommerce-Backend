@@ -6,6 +6,7 @@ import {
   createRefreshToken,
 } from "../../utils/createToken.js";
 import { hashPassword } from "../../utils/hashPass.js";
+import { addressSchema } from "../../validation/address.schema.js";
 const prisma = new PrismaClient();
 
 export const SignIn = async (email, firstName, mobile, lastName, password) => {
@@ -138,6 +139,10 @@ export const logOut = async (email) => {
   }
 };
 export const addUserAddress = async (addressBody, userID) => {
+  const result = addressSchema.validate(addressBody)
+  if(result.error){
+    throw new Error("error validating address")
+  }
   const existingAddress = await prisma.address.findUnique({
     where: { userId: userID },
   });

@@ -65,6 +65,7 @@ export const httpLogOut = async (req, res) => {
   }
 };
 export const httpAddUserAddress = async (req, res) => {
-  await addUserAddress(req.body, parseInt(req.query.id));
+  console.log(req.user.userid);
+  await addUserAddress(req.body, parseInt(req.user.userid));
   res.status(201).json({ done: "done" });
 };

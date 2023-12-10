@@ -1,8 +1,8 @@
 import joi from "joi"
 
 export const addressSchema = joi.object({
-  street: string().required(),
-  city: string().required(),
-  State: string().required(),
-  postalCode: string().required(),
+  street: joi.string().required(),
+  city: joi.string().required(),
+  state: joi.string().required(),
+  postalCode: joi.string().required(),
 });
