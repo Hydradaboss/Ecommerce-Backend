@@ -6,7 +6,7 @@ import {
   httpUpdateProduct,
   httpCreateProduct,
   httpDeleteProduct,
-} from "../controllers/product/admin.prooduct.js";
+} from "../controllers/product/createProducts.js";
 import {
   addToProdcutToWishlist,
   addToProductCart,
