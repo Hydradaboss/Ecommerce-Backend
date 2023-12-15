@@ -2,7 +2,6 @@ import { Login } from "../../models/auth/login.model.js";
 export const httpLogin = async (req, res) => {
   try {
     const { refreshToken, accessToken } = await Login(req.body);
-    console.log(req.sessionID);
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       maxAge: 24 * 24 * 1000 * 60,

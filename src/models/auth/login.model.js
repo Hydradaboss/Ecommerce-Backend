@@ -1,4 +1,4 @@
-import { bcryptjs as bcrypt} from "bcryptjs"
+import  bcrypt from "bcryptjs"
 import { createAccessToken, createRefreshToken } from "../../utils/createToken.js";
 import { loginSchema } from "../../validation/user.schema.js";
 import { PrismaClient } from "@prisma/client";
