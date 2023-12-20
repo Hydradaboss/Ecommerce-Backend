@@ -1,16 +1,14 @@
 import Joi from "joi";
 
 const defined = Joi.string()
-  .regex(/^0\d{10}$/)
-  .required();
-const baseUserSchema = Joi.object({
-  firstName: Joi.string().min(3).max(30).required(),
-  lastName: Joi.string().min(3).max(30).required(),
+  .regex(/^0\d{10}$/);
+export const baseUserSchema = Joi.object({
+  firstName: Joi.string().min(3).max(30),
+  lastName: Joi.string().min(3).max(30),
   password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
   mobile: defined,
   role: Joi.string().valid("admin", "user"),
   email: Joi.string()
-    .required()
     .email({
       minDomainSegments: 2,
       tlds: { allow: ["com"] },
