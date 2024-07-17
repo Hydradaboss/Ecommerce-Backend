@@ -6,3 +6,5 @@ export const addressSchema = joi.object({
   state: joi.string().required(),
   postalCode: joi.string().required(),
 });
+export const none  =
+{}
